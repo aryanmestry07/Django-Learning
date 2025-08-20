@@ -1,0 +1,41 @@
+{% extends "myapp/base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="mb-4">{{ type }} Book List</h1>
+
+    <div class="row">
+        {% for book in books %}
+        <div class="col-md-4">
+            <div class="card shadow-sm mb-4">
+                <a href="{% url 'book-detail-cbv' book.pk %}">
+                    {% if book.image %}
+                        <img src="{{ book.image.url }}" class="card-img-top" alt="{{ book.title }}">
+                    {% else %}
+                        <img src="{% static 'no-image.jpg' %}" class="card-img-top" alt="No image">
+                    {% endif %}
+                </a>
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <a href="{% url 'book-detail-cbv' book.pk %}" class="text-decoration-none">
+                            {{ book.title }}
+                        </a>
+                    </h5>
+                    <p class="card-text text-muted">by {{ book.author }}</p>
+                    <a href="{% url 'book-update-cb' book.pk %}" class="btn btn-warning btn-sm">Edit</a>
+                    <a href="{% url 'book-delete-cb' book.pk %}" class="btn btn-danger btn-sm">Delete</a>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <p>No books available.</p>
+        {% endfor %}
+    </div>
+
+    <div class="mt-4">
+        <a href="{% url 'book-create-fb' %}" class="btn btn-primary">Add Book (FBV)</a>
+        <a href="{% url 'book-create-cb' %}" class="btn btn-success">Add Book (CBV)</a>
+    </div>
+</div>
+{% endblock %}

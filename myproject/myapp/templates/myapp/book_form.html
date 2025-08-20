@@ -1,0 +1,33 @@
+{% extends "myapp/base.html" %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-6">
+
+    <div class="card shadow-lg">
+      <div class="card-header text-center">
+        <h4 class="mb-0">{{ type }} - Add Book</h4>
+      </div>
+      <div class="card-body p-4">
+
+        <form method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
+          {% csrf_token %}
+
+          <p class="text-muted small text-center">
+            Choose where to save your book: <strong>FBV</strong> or <strong>CBV</strong>.
+          </p>
+
+          {{ form.as_p }}
+
+          <div class="d-flex gap-3 mt-4">
+            <button type="submit" name="save_fbv" value="1" class="btn btn-success w-50">Save in FBV</button>
+            <button type="submit" name="save_cbv" value="1" class="btn btn-warning w-50">Save in CBV</button>
+          </div>
+        </form>
+
+      </div>
+    </div>
+
+  </div>
+</div>
+{% endblock %}

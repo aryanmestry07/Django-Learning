@@ -1,0 +1,13 @@
+{% extends 'myapp/base.html' %}
+
+{% block content %}
+<h2>Book Details</h2>
+<ul class="list-group">
+    <li class="list-group-item"><strong>Title:</strong> {{ object.title }}</li>
+    <li class="list-group-item"><strong>Author:</strong> {{ object.author }}</li>
+</ul>
+<br>
+<a href="{% url 'book_list' %}" class="btn btn-secondary">Back to List</a>
+<a href="{% url 'book_update' object.pk %}" class="btn btn-warning">Edit</a>
+<a href="{% url 'book_delete' object.pk %}" class="btn btn-danger">Delete</a>
+{% endblock %}
