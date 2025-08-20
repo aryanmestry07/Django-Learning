@@ -1,6 +1,7 @@
-#urls.py
 from django.urls import path
 from . import views
+from .views import CustomLoginView
+from django.contrib.auth import views as auth_views
 
 urlpatterns = [
     path('', views.base, name='index'),
@@ -18,6 +19,13 @@ urlpatterns = [
     path('books/create-cbv/', views.BookCreateView.as_view(), name='book-create-cb'),
     path('books/<int:pk>/edit-cbv/', views.BookUpdateView.as_view(), name='book-update-cb'),
     path('books/<int:pk>/delete-cbv/', views.BookDeleteView.as_view(), name='book-delete-cb'),
+
+    # Selector
     path('book-form/', views.book_form_selector, name='book_form'),
 
+    # Auth
+    path("register/", views.register, name="register"),
+    path("accounts/login/", auth_views.LoginView.as_view(template_name="myapp/login.html"), name="login"),
+    path("accounts/logout/", auth_views.LogoutView.as_view(), name="logout"),
 ]
+

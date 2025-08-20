@@ -2,6 +2,12 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
 from django.views.generic import CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth import login
+from django.contrib.auth.views import LoginView
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
+
 from .models import Book
 from .forms import BookForm
 
@@ -11,10 +17,14 @@ from .forms import BookForm
 def base(request):
     return render(request, 'myapp/base.html')
 
+
+@login_required
 def hello_fbv(request):
     books = Book.objects.filter(source_type=1)
     return render(request, 'myapp/hello_fbv.html', {'books': books})
 
+
+@login_required
 def book_create_fbv(request):
     if request.method == 'POST':
         form = BookForm(request.POST, request.FILES)
@@ -27,6 +37,8 @@ def book_create_fbv(request):
         form = BookForm()
     return render(request, 'myapp/book_form.html', {'form': form, 'type': 'FBV Create'})
 
+
+@login_required
 def book_update_fbv(request, pk):
     book = get_object_or_404(Book, pk=pk)
     if request.method == 'POST':
@@ -38,6 +50,8 @@ def book_update_fbv(request, pk):
         form = BookForm(instance=book)
     return render(request, 'myapp/book_form.html', {'form': form, 'type': 'FBV Update'})
 
+
+@login_required
 def book_delete_fbv(request, pk):
     book = get_object_or_404(Book, pk=pk)
     if request.method == 'POST':
@@ -49,12 +63,13 @@ def book_delete_fbv(request, pk):
 # -----------------------------
 #           CBVs    
 # -----------------------------
-class HelloCBV(View):
+class HelloCBV(LoginRequiredMixin, View):
     def get(self, request):
         books = Book.objects.filter(source_type=2)
         return render(request, 'myapp/hello_cbv.html', {'books': books})
     
-class BookCreateView(CreateView):
+
+class BookCreateView(LoginRequiredMixin, CreateView):
     model = Book
     form_class = BookForm
     template_name = 'myapp/book_form.html'
@@ -71,7 +86,8 @@ class BookCreateView(CreateView):
         context['type'] = 'CBV Create'
         return context
 
-class BookUpdateView(UpdateView):
+
+class BookUpdateView(LoginRequiredMixin, UpdateView):
     model = Book
     form_class = BookForm
     template_name = 'myapp/book_form.html'
@@ -84,7 +100,8 @@ class BookUpdateView(UpdateView):
         context['type'] = 'CBV Update'
         return context
 
-class BookDeleteView(DeleteView):
+
+class BookDeleteView(LoginRequiredMixin, DeleteView):
     model = Book
     template_name = 'myapp/book_confirm_delete.html'
 
@@ -100,6 +117,7 @@ class BookDeleteView(DeleteView):
 # -----------------------------
 #     Form Selector (Optional)
 # -----------------------------
+@login_required
 def book_form_selector(request):
     form = BookForm(request.POST or None, request.FILES or None)
 
@@ -128,3 +146,27 @@ def book_form_selector(request):
         'form': form,
         'type': type_label
     })
+
+
+# -----------------------------
+#   Auth Views (Register/Login)
+# -----------------------------
+def register(request):
+    if request.method == "POST":
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)  # ✅ auto-login after register
+            return redirect("base")  # go to home after register
+    else:
+        form = UserCreationForm()
+    return render(request, "myapp/register.html", {"form": form})
+
+
+class CustomLoginView(LoginView):
+    template_name = "myapp/login.html"   # ✅ your template location
+    redirect_authenticated_user = True
+
+    def get_success_url(self):
+        # after login, go to book form selector (or change to hello_fbv/hello_cbv)
+        return reverse_lazy("book_form")
