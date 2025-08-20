@@ -89,12 +89,6 @@ Username: admin
 
 Password: admin123
 
-(Change in production!)
-
-📸 Screenshots
-
-(Add your app screenshots here)
-
 🤝 Contributing
 
 Pull requests are welcome!
