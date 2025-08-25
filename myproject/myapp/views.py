@@ -157,7 +157,7 @@ def register(request):
         if form.is_valid():
             user = form.save()
             login(request, user)  # ✅ auto-login after register
-            return redirect("base")  # go to home after register
+            return redirect("index")  # go to home after register
     else:
         form = UserCreationForm()
     return render(request, "myapp/register.html", {"form": form})
