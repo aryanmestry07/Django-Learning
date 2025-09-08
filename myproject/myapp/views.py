@@ -19,7 +19,7 @@ def base(request):
 
 @login_required
 def index(request):
-    return render(request, 'myapp/base.html')  # Dashboard / home after login
+    return render(request, 'myapp/index.html')  # Dashboard / home after login
 
 # -----------------------------
 #           FBVs
